@@ -68,3 +68,118 @@ POST /user/register
 - The password is automatically hashed before storage
 - A JWT token is generated and returned upon successful registration
 - The response includes both the authentication token and the user details
+
+## Login User
+Authenticate a user and retrieve a JWT token.
+
+### Endpoint
+```
+POST /user/login
+```
+
+### Request Body
+```json
+{
+  "email": "string",       // Required, valid email format
+  "password": "string"     // Required, min 5 characters
+}
+```
+
+### Response
+
+#### Success Response (200 OK)
+```json
+{
+  "token": "JWT_TOKEN_STRING",
+  "user": {
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "_id": "string"
+  }
+}
+```
+
+#### Error Responses
+
+##### Unauthorized (401)
+```json
+{
+  "error": "Invalid credentials"
+}
+```
+
+##### Internal Server Error (500)
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+## Logout User
+Logout the currently authenticated user and invalidate their token.
+
+### Endpoint
+```
+POST /user/logout
+```
+
+### Response
+
+#### Success Response (200 OK)
+```json
+{
+  "message": "Successfully logged out"
+}
+```
+
+#### Error Responses
+
+##### Unauthorized (401)
+```json
+{
+  "error": "Invalid token"
+}
+```
+
+##### Internal Server Error (500)
+```json
+{
+  "error": "Internal Server Error"
+}
+```
+
+## User Profile Endpoint
+
+### GET /users/profile
+
+Get the profile information of the currently authenticated user.
+
+#### Authentication
+- Requires Bearer token in Authorization header or token in cookies
+- Format: `Bearer <token>`
+
+#### Request
+No request body required.
+
+#### Response
+
+**Success (200 OK)**
+```json
+{
+    "success": true,
+    "user": {
+        "_id": "string",
+        "email": "string", 
+    }
+}
+```
+
+**Error (401 Unauthorized)**
+```json
+{
+    "message": "Unauthorized"
+}
+```
