@@ -266,3 +266,72 @@ POST /captain/register
 - Vehicle plate: Minimum 3 characters
 - Vehicle capacity: Must be greater than 0
 - Vehicle type: Must be one of: car, motorcycle, auto
+
+## Captain Endpoints
+
+### Login Captain
+Authenticate a captain and receive an access token.
+
+**Endpoint:** `POST /api/captain/login`
+
+**Request Body:**
+```json
+{
+    "email": "captain@example.com",
+    "password": "password123"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+    "token": "jwt_token_here",
+    "captain": {
+        "_id": "captain_id",
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "captain@example.com",
+        "vehicle": {
+            "color": "black",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        }
+    }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid email or password format
+- `401 Unauthorized`: Invalid credentials
+
+### Get Captain Profile
+Retrieve the authenticated captain's profile information.
+
+**Endpoint:** `GET /api/captain/profile`
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Response (200 OK):**
+```json
+{
+    "captain": {
+        "_id": "captain_id",
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "captain@example.com",
+        "vehicle": {
+            "color": "black",
+            "plate": "ABC123",
+            "capacity": 4,
+            "vehicleType": "car"
+        }
+    }
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized`: Invalid or missing token
