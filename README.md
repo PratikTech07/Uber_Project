@@ -183,3 +183,86 @@ No request body required.
     "message": "Unauthorized"
 }
 ```
+
+## Captain API Documentation
+
+### Register Captain
+Register a new captain in the system.
+
+#### Endpoint
+```
+POST /captain/register
+```
+
+#### Request Body
+```json
+{
+  "fullname": {
+    "firstname": "string",  // Required, min 3 characters
+    "lastname": "string"    // Required, min 3 characters
+  },
+  "email": "string",       // Required, valid email format
+  "password": "string",    // Required, min 5 characters
+  "vehicle": {
+    "color": "string",     // Required, min 3 characters
+    "plate": "string",     // Required, min 3 characters
+    "capacity": "number",  // Required, min 1
+    "vehicleType": "string" // Required, enum: ['car', 'motorcycle', 'auto']
+  }
+}
+```
+
+#### Response
+
+##### Success Response (201 Created)
+```json
+{
+  "token": "JWT_TOKEN_STRING",
+  "captain": {
+    "fullname": {
+      "firstname": "string",
+      "lastname": "string"
+    },
+    "email": "string",
+    "vehicle": {
+      "color": "string",
+      "plate": "string",
+      "capacity": "number",
+      "type": "string"
+    },
+    "_id": "string"
+  }
+}
+```
+
+##### Error Responses
+
+###### Bad Request (400)
+```json
+{
+  "errors": [
+    {
+      "msg": "Invalid Email",
+      "param": "email",
+      "location": "body"
+    }
+  ]
+}
+```
+
+###### Conflict (400)
+```json
+{
+  "message": "Captain already exist"
+}
+```
+
+#### Validation Rules
+- First name: Minimum 3 characters
+- Last name: Minimum 3 characters
+- Email: Must be valid email format
+- Password: Minimum 5 characters
+- Vehicle color: Minimum 3 characters
+- Vehicle plate: Minimum 3 characters
+- Vehicle capacity: Must be greater than 0
+- Vehicle type: Must be one of: car, motorcycle, auto
