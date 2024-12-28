@@ -7,17 +7,18 @@ const BlacklistToken = require('../models/blacklistToken.model');
 
 module.exports.registerCaptain = async (req, res, next) => {
     try {
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+        
         const { fullname, email, password, vehicle } = req.body;
 
         const isCaptainAlreadyExist = await captainModel.findOne({ email });
 
         if (isCaptainAlreadyExist) {
-            return res.status(400).json({ message: 'Captain already exist' });
+            return res.status(400).json({ message: 'Captain already exists' });
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
@@ -30,13 +31,16 @@ module.exports.registerCaptain = async (req, res, next) => {
             color: vehicle.color,
             plate: vehicle.plate,
             capacity: vehicle.capacity,
-            vehicleType: vehicle.vehicleType,
+            vehicleType: vehicle.type  // Ensure this matches your model
         });
 
         const token = captain.generateAuthToken();
 
         res.status(201).json({ token, captain });
     } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
         next(error);
     }
 }

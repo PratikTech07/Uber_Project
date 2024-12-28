@@ -27,9 +27,11 @@ module.exports.createCaptain = async ({
             color,
             plate,
             capacity,
-            type :vehicleType
+            type : vehicleType
         }
     });
+
+    console.log(captain)
 
     return captain;
 }
