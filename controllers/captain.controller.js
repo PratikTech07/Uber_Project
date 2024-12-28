@@ -6,17 +6,14 @@ const authMiddleware = require('../middleware/auth.middleware');
 const BlacklistToken = require('../models/blacklistToken.model');
 
 module.exports.registerCaptain = async (req, res, next) => {
-    try {  // Added try-catch block
+    try {
         const errors = validationResult(req);
-
-        // Fixed validation check syntax
-        if (!errors.isEmpty()) {  // Added parentheses
-            return res.status(400).json({ errors: errors.array() })
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
         const { fullname, email, password, vehicle } = req.body;
 
-        // Fixed typo in variable name
         const isCaptainAlreadyExist = await captainModel.findOne({ email });
 
         if (isCaptainAlreadyExist) {
@@ -40,21 +37,18 @@ module.exports.registerCaptain = async (req, res, next) => {
 
         res.status(201).json({ token, captain });
     } catch (error) {
-        next(error);  // Added error handling
+        next(error);
     }
 }
 
 module.exports.loginCaptain = async (req, res, next) => {
-    try {  // Added try-catch block
+    try {
         const errors = validationResult(req);
-
-        // Fixed validation check syntax
-        if (!errors.isEmpty()) {  // Added parentheses
-            return res.status(400).json({ errors: errors.array() })
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
         const { email, password } = req.body;
-
         const captain = await captainModel.findOne({ email }).select('+password');
 
         if (!captain) {
@@ -62,36 +56,45 @@ module.exports.loginCaptain = async (req, res, next) => {
         }
 
         const isPasswordMatch = await captain.comparePassword(password);
-
         if (!isPasswordMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
 
         const token = captain.generateAuthToken();
-
-        // Fixed res.cookies to res.cookie
-        res.cookie('token', token);
+        
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        });
 
         res.status(200).json({ token, captain });
     } catch (error) {
-        next(error);  // Added error handling
+        next(error);
     }
 }
 
-
 module.exports.getCaptainProfile = async (req, res, next) => {
-    res.status(200).json({ captain: req.captain });
+    try {
+        res.status(200).json({ captain: req.captain });
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports.logoutCaptain = async (req, res, next) => {
+    try {
+        const token = req.cookies.token || 
+            (req.headers.authorization && req.headers.authorization.split(' ')[1]);
 
-    const token = req.cookies.token || req.headers.authorization.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
 
-
-    await BlacklistToken.create({ token });
-
-    res.clearCookie('token');
-
-    res.status(200).json({ message: 'Logout successful' });
-
+        await BlacklistToken.create({ token });
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        next(error);
+    }
 }
