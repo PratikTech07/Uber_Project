@@ -24,9 +24,6 @@ router.post(
     userController.registerUser
 );
 
-router.get('/login', (req, res) => {
-    res.send('This is the login page.');
-});
 
 router.post('/login',[
     body('email').isEmail().withMessage('Invalid Email'),
