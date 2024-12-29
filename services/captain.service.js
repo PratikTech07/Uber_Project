@@ -9,10 +9,11 @@ module.exports.createCaptain = async ({
     color,
     plate,
     capacity,
-    vehicleType
+    type
 }) => {
      // Input validation
-    if (!firstname || !lastname || !email || !password || !color || !plate || !capacity || !vehicleType) {
+     
+    if (!firstname || !lastname || !email || !password || !color || !plate || !capacity || !type) {
         throw new Error('All fields are required');
     }
    
@@ -27,11 +28,11 @@ module.exports.createCaptain = async ({
             color,
             plate,
             capacity,
-            type : vehicleType
+            type : type
         }
     });
 
-    console.log(captain)
+    
 
     return captain;
 }

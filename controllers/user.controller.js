@@ -126,10 +126,10 @@ module.exports.logoutUser = async (req, res, next) => {
             await blacklistTokenModel.create({ token });
         }
 
-        res.clearCookie('token', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production'
-        });
+        // res.clearCookie('token', {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === 'production'
+        // });
 
         res.status(200).json({
             success: true,

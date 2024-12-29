@@ -4,10 +4,7 @@ const { body } = require('express-validator');
 const userController = require('../controllers/user.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
-// GET /register - Serve a registration page
-router.get('/register', (req, res) => {
-    res.send('This is the registration page.');
-});
+
 
 // POST /register - Handle form submissions
 router.post(
